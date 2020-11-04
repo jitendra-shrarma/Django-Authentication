@@ -1,5 +1,5 @@
 # ignore virtual environment
-env/
+.venv/
 
 # ignore database file
 *.sqlite3
@@ -8,4 +8,4 @@ env/
 __pycache__/
 
 # ignore .env files
-.env
+.venv
