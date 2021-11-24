@@ -121,6 +121,6 @@ class SignInSerializer(serializers.ModelSerializer):
         return password
 
 
-# SignOut Serializer
-class SignOutSerializer(serializers.Serializer):
+# Empty Serializer
+class EmptySerializer(serializers.Serializer):
     pass
