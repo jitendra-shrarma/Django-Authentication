@@ -13,7 +13,7 @@ from .serializers import (
 )
 
 # Import set_cookies from api.utils
-from .utils import set_cookies, unset_cookies
+from .utils import set_cookies, unset_cookies, get_access_token_response
 
 
 # SignUpAPIView, used as_view for signup url,
@@ -23,6 +23,13 @@ class SignUpAPIView(generics.GenericAPIView):
 
     # Post method,
     def post(self, request):
+        # Check for access_token and return response
+        response = get_access_token_response(request)
+
+        # If request have access_token or refresh_token, return response
+        if response is not None:
+            return response
+
         # Serializer instance with data
         serializer = self.get_serializer(data=request.data)
         # Check validity of data, if it is not valid raise exceptions
@@ -50,6 +57,13 @@ class SignInAPIView(generics.GenericAPIView):
 
     # POST method,
     def post(self, request):
+        # Check for access_token and return response
+        response = get_access_token_response(request)
+
+        # If request have access_token or refresh_token, return response
+        if response is not None:
+            return response
+
         # Serializer instance with data
         serializer = self.get_serializer(data=request.data)
         # Check validity of data, if it is not valid raise exceptions
@@ -83,7 +97,7 @@ class SignInAPIView(generics.GenericAPIView):
 
         # Return response with message "SignIn failed"
         return Response(
-            {"message": "SignIn failed!",}, status=status.HTTP_204_NO_CONTENT
+            {"message": "SignIn failed!"}, status=status.HTTP_204_NO_CONTENT
         )
 
 
@@ -93,15 +107,19 @@ class SignOutAPIView(generics.GenericAPIView):
 
     # Delete method,
     def delete(self, request):
-        if request.COOKIES.get("refresh_token", None) is not None:
-            # Create response with message "Successfully signout."
-            response = Response(
-                {"message": "Successfully signout."}, status=status.HTTP_200_OK
-            )
-            # Remove tokens from cookies
-            unset_cookies(response)
-            return response
+        # Check for access_token and return response
+        response = get_access_token_response(request)
 
-        return Response(
-            {"message": "Invalid request."}, status=status.HTTP_400_BAD_REQUEST
+        # If request have no access_token or refresh_token, return response
+        if response is None:
+            return Response(
+                {"message": "Invalid request."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Create response with message "Successfully signout."
+        response = Response(
+            {"message": "Successfully signout."}, status=status.HTTP_200_OK
         )
+        # Remove tokens from cookies
+        unset_cookies(response)
+        return response
