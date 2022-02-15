@@ -1,6 +1,6 @@
 # Import default modules
 from django.contrib.auth import authenticate
-from rest_framework import generics, permissions
+from rest_framework import status, generics, permissions
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -11,6 +11,7 @@ from .serializers import (
     SignInSerializer,
     SignOutSerializer,
 )
+
 # Import set_cookies from api.utils
 from .utils import set_cookies, unset_cookies
 
@@ -37,7 +38,8 @@ class SignUpAPIView(generics.GenericAPIView):
                 "user": UserSerializer(
                     user, context=self.get_serializer_context()
                 ).data,
-            }
+            },
+            status=status.HTTP_201_CREATED,
         )
 
 
@@ -72,14 +74,17 @@ class SignInAPIView(generics.GenericAPIView):
                     "user": UserSerializer(
                         user, context=self.get_serializer_context()
                     ).data,
-                }
+                },
+                status=status.HTTP_200_OK,
             )
             # Add tokens in cookies,
             set_cookies(response, refresh_token)
             return response
 
         # Return response with message "SignIn failed"
-        return Response({"message": "SignIn failed!",})
+        return Response(
+            {"message": "SignIn failed!",}, status=status.HTTP_204_NO_CONTENT
+        )
 
 
 # SignOutAPIView, used as_view for signout url,
@@ -88,8 +93,15 @@ class SignOutAPIView(generics.GenericAPIView):
 
     # Delete method,
     def delete(self, request):
-        # Create response with message "Successfully signout."
-        response = Response({"message": "Successfully signout."})
-        # Remove cookies
-        unset_cookies(response)
-        return response
+        if request.COOKIES.get("refresh_token", None) is not None:
+            # Create response with message "Successfully signout."
+            response = Response(
+                {"message": "Successfully signout."}, status=status.HTTP_200_OK
+            )
+            # Remove tokens from cookies
+            unset_cookies(response)
+            return response
+
+        return Response(
+            {"message": "Invalid request."}, status=status.HTTP_400_BAD_REQUEST
+        )
