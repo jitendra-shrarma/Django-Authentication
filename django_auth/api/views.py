@@ -5,7 +5,12 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # Import Serializer from api.serializers
-from .serializers import (UserSerializer, SignUpSerializer, SignInSerializer, SignOutSerializer)
+from .serializers import (
+    UserSerializer,
+    SignUpSerializer,
+    SignInSerializer,
+    SignOutSerializer,
+)
 # Import set_cookies from api.utils
 from .utils import set_cookies, unset_cookies
 
@@ -84,7 +89,7 @@ class SignOutAPIView(generics.GenericAPIView):
     # Delete method,
     def delete(self, request):
         # Create response with message "Successfully signout."
-        response = Response({"message":"Successfully signout."})
+        response = Response({"message": "Successfully signout."})
         # Remove cookies
         unset_cookies(response)
         return response
