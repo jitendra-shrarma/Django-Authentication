@@ -2,7 +2,7 @@
 from django.urls import path
 
 # Import SignUpAPIView
-from .views import SignUpAPIView, SignInAPIView
+from .views import SignUpAPIView, SignInAPIView, SignOutAPIView
 
 
 # Create urlpatterns
@@ -11,4 +11,6 @@ urlpatterns = [
     path("auth/signup", SignUpAPIView.as_view(), name="signup"),
     # path for auth/signin, response for signin with SignInAPIView
     path("auth/signin", SignInAPIView.as_view(), name="signin"),
+    # path for auth/signout, response for signout with SignOutAPIView
+    path("auth/signout", SignOutAPIView.as_view(), name="signout"),
 ]

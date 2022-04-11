@@ -5,7 +5,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # Import Serializer from api.serializers
-from .serializers import (UserSerializer, SignUpSerializer, SignInSerializer)
+from .serializers import (UserSerializer, SignUpSerializer, SignInSerializer, SignOutSerializer)
+# Import set_cookies from api.utils
+from .utils import set_cookies, unset_cookies
 
 
 # SignUpAPIView, used as_view for signup url,
@@ -13,7 +15,7 @@ class SignUpAPIView(generics.GenericAPIView):
     # SignUpSerializer class for serializering request
     serializer_class = SignUpSerializer
 
-    # POST method handler, handle post method requests for this view
+    # Post method,
     def post(self, request):
         # Serializer instance with data
         serializer = self.get_serializer(data=request.data)
@@ -39,7 +41,7 @@ class SignInAPIView(generics.GenericAPIView):
     # SignInSerializer class for serializering request
     serializer_class = SignInSerializer
 
-    # POST method handler, handle post method requests for this view
+    # POST method,
     def post(self, request):
         # Serializer instance with data
         serializer = self.get_serializer(data=request.data)
@@ -68,13 +70,21 @@ class SignInAPIView(generics.GenericAPIView):
                 }
             )
             # Add tokens in cookies,
-            response.set_cookie(
-                "access_token", refresh_token.access_token, httponly=True, max_age=300
-            )
-            response.set_cookie(
-                "refresh_token", refresh_token, httponly=True, max_age=(24 * 3600)
-            )
+            set_cookies(response, refresh_token)
             return response
 
         # Return response with message "SignIn failed"
         return Response({"message": "SignIn failed!",})
+
+
+# SignOutAPIView, used as_view for signout url,
+class SignOutAPIView(generics.GenericAPIView):
+    serializer_class = SignOutSerializer
+
+    # Delete method,
+    def delete(self, request):
+        # Create response with message "Successfully signout."
+        response = Response({"message":"Successfully signout."})
+        # Remove cookies
+        unset_cookies(response)
+        return response
