@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # Import Serializer from api.serializers
-from .serializers import UserSerializer, SignUpSerializer, SignInSerializer
+from .serializers import (UserSerializer, SignUpSerializer, SignInSerializer)
 
 
 # SignUpAPIView, used as_view for signup url,
@@ -14,7 +14,7 @@ class SignUpAPIView(generics.GenericAPIView):
     serializer_class = SignUpSerializer
 
     # POST method handler, handle post method requests for this view
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         # Serializer instance with data
         serializer = self.get_serializer(data=request.data)
         # Check validity of data, if it is not valid raise exceptions
@@ -40,7 +40,7 @@ class SignInAPIView(generics.GenericAPIView):
     serializer_class = SignInSerializer
 
     # POST method handler, handle post method requests for this view
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         # Serializer instance with data
         serializer = self.get_serializer(data=request.data)
         # Check validity of data, if it is not valid raise exceptions

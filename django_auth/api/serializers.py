@@ -119,3 +119,8 @@ class SignInSerializer(serializers.ModelSerializer):
     def validate_password(self, password):
         password_validation.validate_password(password)
         return password
+
+
+# SignOut Serializer
+class SignOutSerializer(serializers.Serializer):
+    pass
