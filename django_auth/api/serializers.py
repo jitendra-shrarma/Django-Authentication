@@ -101,3 +101,21 @@ class SignUpSerializer(serializers.ModelSerializer):
         # Add user to it's group
         group.user_set.add(user)
         return user
+
+
+# SignIn Serializer
+class SignInSerializer(serializers.ModelSerializer):
+
+    # Required fields for SignUp
+    username = serializers.CharField(required=True, help_text="Username required")
+    password = serializers.CharField(required=True, help_text="Password required")
+
+    # fields to be serialized
+    class Meta:
+        model = User
+        fields = ("id", "username", "password")
+
+    # Validate password by password_validation module
+    def validate_password(self, password):
+        password_validation.validate_password(password)
+        return password
