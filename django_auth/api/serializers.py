@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import password_validation
 
 
@@ -47,8 +48,6 @@ class SignUpSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         group_name = validated_data['user_level']
-        is_superuser = False
-        is_staff = False
 
         user = User.objects.create_user(
             username = validated_data['username'],
@@ -56,6 +55,19 @@ class SignUpSerializer(serializers.ModelSerializer):
             password = validated_data['password'],
         )
 
-        group, group_status = Group.objects.get_or_create(name=group_name)
+        group, new_group = Group.objects.get_or_create(name=group_name)
+        if new_group:
+            if group_name == "Teacher":
+                content_type = ContentType.objects.get_for_model(User)
+                permission = Permission.objects.create(
+                    codename = "view_student",
+                    name = "Can view Student",
+                    content_type = content_type,
+                )
+                group.permissions.add(permission)
+            elif group_name == "Super-Admin":
+                permission = Permission.objects.filter(codename="view_user").values()
+                group.permissions.add(permission[0]['id'])
+
         group.user_set.add(user)
         return user
