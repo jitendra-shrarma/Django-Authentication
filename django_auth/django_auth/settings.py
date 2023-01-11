@@ -10,17 +10,25 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
+import environ
 from pathlib import Path
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
+# reading .env file
+environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'qr1&f2*=5j0!*@b1qqs^yj_6xg)hpni$ejnr$ztk4*hey99%bg'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,6 +49,13 @@ INSTALLED_APPS = [
     'django_rest_passwordreset',
 ]
 
+RESET_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -52,6 +67,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'django_auth.urls'
+
+EMAIL_BACKEND=env('EMAIL_BACKEND')
+EMAIL_HOST=env('EMAIL_HOST')
+EMAIL_PORT=env('EMAIL_PORT')
+EMAIL_HOST_USER=env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD=env('EMAIL_HOST_PASSWORD')
 
 TEMPLATES = [
     {
@@ -77,11 +98,10 @@ WSGI_APPLICATION = 'django_auth.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': env('ENGINE', default='django.db.backends.sqlite3'),
+        'NAME': env('NAME', default=str(BASE_DIR)+'/db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

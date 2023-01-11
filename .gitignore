@@ -6,3 +6,6 @@ env/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+
+# ignore .env files
+.env
