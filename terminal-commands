@@ -14,3 +14,9 @@ pip install django-rest-passwordreset
 
 # save all project dependencies in requirements.txt
 pip freeze > requirements.txt
+
+# start project
+django-admin startproject django_auth
+
+# start app in django_auth
+python manage.py startapp api
