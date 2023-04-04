@@ -3,3 +3,14 @@ python -m venv env
 
 # activate virtual environment
 .\env\Scripts\activate
+
+# upgrade pip tool
+python -m pip install --upgrade pip
+
+# install project dependencies in current virtual environment
+pip install django
+pip install django-rest-framework
+pip install django-rest-passwordreset
+
+# save all project dependencies in requirements.txt
+pip freeze > requirements.txt
